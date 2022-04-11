@@ -23,7 +23,7 @@ server.get("/api/users/:id", async (req, res) => {
     const user = await Users.findById(req.params.id);
     if (!user) {
       res.status(404).json({
-        message: `user with id ${req.params.id} not round`,
+        message: `user with id ${req.params.id} not found`,
       });
     } else {
       res.json(user);
@@ -31,6 +31,24 @@ server.get("/api/users/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: "error getting user id",
+      error: err.message,
+    });
+  }
+});
+
+server.post("/api/users", async (req, res) => {
+  try {
+    if (!req.body.name || !req.body.bio) {
+      res.status(201).json({
+        message: "name and bio required",
+      });
+    } else {
+      const newUser = await Users.insert(req.body);
+      res.status(201).json(newUser);
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: "error posting new user",
       error: err.message,
     });
   }
